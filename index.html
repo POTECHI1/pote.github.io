@@ -13,40 +13,44 @@
            align-items: center;
            height: 100vh;
            margin: 0;
-           writing-mode: vertical-rl;
-           text-orientation: upright;
        }
        .container {
+           display: flex;
+           flex-direction: column;
            text-align: center;
-           transform: rotate(180deg);
+       }
+       .vertical-text {
+           transform: rotate(-90deg);
+           white-space: nowrap;
+           display: inline-block;
        }
    </style>
 </head>
 <body>
    <div class="container">
        <header>
-           <h3>教育学_ランダム問題</h3>
+           <h3 class="vertical-text">教育学_ランダム問題</h3>
            <nav>
                <ul>
-                   <li><a href="index.html">目次（トップ）</a></li>
+                   <li class="vertical-text"><a href="index.html">目次（トップ）</a></li>
                </ul>
            </nav>
        </header>
        <main>
-       <h4>目次（トップ）</h4>
-       <ul>
-           <li><a href="sisousi-1menu.html">教育思想史へ</a></li>
-           <li><a href="houhougaku-1menu.html">教育方法学へ</a></li>
-           <li><a href="nihonkyouikusi-1menu.html">日本教育史へ</a></li>
-           <li><a href="kyousya-1menu.html">教育社会学へ</a></li>
-           <li><a href="gyouzaihou-1menu.html">教育行財政学・法学へ</a></li>
-           <li><a href="seiyouhikaku-1menu.html">西洋教育史・比較教育学へ</a></li>
-           <li><a href="youtokusin-1menu.html">幼教・特支・心理へ</a></li>
-           <li><a href="gakusai-1menu.html">学際（教育）へ</a></li>
-           <li><a href="syomotu-1menu.html">書物系へ</a></li>
-           <li><a href="sonota-1menu.html">その他へ</a></li>
-       </ul>
-   </main>
+           <h4 class="vertical-text">目次（トップ）</h4>
+           <ul>
+               <li class="vertical-text"><a href="sisousi-1menu.html">教育思想史へ</a></li>
+               <li class="vertical-text"><a href="houhougaku-1menu.html">教育方法学へ</a></li>
+               <li class="vertical-text"><a href="nihonkyouikusi-1menu.html">日本教育史へ</a></li>
+               <li class="vertical-text"><a href="kyousya-1menu.html">教育社会学へ</a></li>
+               <li class="vertical-text"><a href="gyouzaihou-1menu.html">教育行財政学・法学へ</a></li>
+               <li class="vertical-text"><a href="seiyouhikaku-1menu.html">西洋教育史・比較教育学へ</a></li>
+               <li class="vertical-text"><a href="youtokusin-1menu.html">幼教・特支・心理へ</a></li>
+               <li class="vertical-text"><a href="gakusai-1menu.html">学際（教育）へ</a></li>
+               <li class="vertical-text"><a href="syomotu-1menu.html">書物系へ</a></li>
+               <li class="vertical-text"><a href="sonota-1menu.html">その他へ</a></li>
+           </ul>
+       </main>
    </div>
- </body>
+</body>
 </html>
