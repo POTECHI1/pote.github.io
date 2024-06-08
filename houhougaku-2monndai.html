@@ -68,3 +68,65 @@
 
 <script>
    const qaList = [
+              {
+            question:"問題です。",
+            answer: "答えです。"
+　　　 }
+ ];
+
+const questionElement = document.getElementById('question');
+const answerElement = document.getElementById('answer');
+const showAnswerButton = document.getElementById('showAnswer');
+const nextQuestionButton = document.getElementById('nextQuestion');
+const backToQuestionButton = document.getElementById('backToQuestion');
+
+function getRandomQuestion() {
+   const randomIndex = Math.floor(Math.random() * qaList.length);
+   return qaList[randomIndex];
+}
+
+function displayQuestion() {
+   const qa = getRandomQuestion();
+   questionElement.textContent = qa.question;
+   answerElement.textContent = qa.answer;
+}
+
+function showAnswer() {
+   answerElement.style.display = 'block';
+   showAnswerButton.style.display = 'none';
+   nextQuestionButton.style.display = 'inline-block';
+   backToQuestionButton.style.display = 'inline-block';
+}
+
+function nextQuestion() {
+   answerElement.style.display = 'none';
+   showAnswerButton.style.display = 'inline-block';
+   nextQuestionButton.style.display = 'none';
+   backToQuestionButton.style.display = 'none';
+   displayQuestion();
+}
+
+function backToQuestion() {
+   answerElement.style.display = 'none';
+   showAnswerButton.style.display = 'inline-block';
+   nextQuestionButton.style.display = 'none';
+   backToQuestionButton.style.display = 'none';
+}
+
+showAnswerButton.addEventListener('click', showAnswer);
+nextQuestionButton.addEventListener('click', nextQuestion);
+backToQuestionButton.addEventListener('click', backToQuestion);
+
+// Initialize with the first question
+displayQuestion();
+
+</script>
+   <ul>
+       <li><a href="houhougaku-3list.html">教育方法学ランダム問題の答え・リストへ<b>（問題はリロードされます）</b></a></li>
+       <li><a href="houhougaku-1menu.html">教育方法学の目次へ</a></li>      
+       <li><a href="index.html">目次（トップ）へ</a></li>
+   </ul>
+   
+
+</body>
+</html>
