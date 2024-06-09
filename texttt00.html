@@ -1,71 +1,139 @@
-<!DOCTYPE html>
+　<!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>文字操作サイト</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            margin: 20px;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-        }
-        .actions {
-            margin-top: 10px;
-        }
-    </style>
-    <script>
-        function performAction(action) {
-            let text = document.getElementById('text').value;
-            let search = document.getElementById('search').value;
-            let replace = document.getElementById('replace').value;
+   <meta charset="UTF-8">
+   <title>文字検索・置換ページ </title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+       }
+       .container {
+           margin: 20px;
+       }
+       textarea, #result {
+           width: 100%;
+           margin-bottom: 10px;
+           font-family: Arial, sans-serif;
+           font-size: 14px;
+           padding: 10px;
+           border: 1px solid #ccc;
+           box-sizing: border-box;
+       }
+       #result {
+           white-space: pre-wrap;
+           overflow-y: hidden;
+           display: block;
+       }
+       .actions {
+           margin-top: 10px;
+       }
+       .highlight {
+           background-color: yellow;
+       }
+       .current-highlight {
+           background-color: orange;
+       }
+   </style>
+   <script>
+       let currentMatchIndex = 0;
+       let matches = [];
 
-            // 特殊文字処理
-            let specialCharPattern = search
-                .replace(/!/g, '[!0-9!]')
-                .replace(/\^*\*/g, '[!0-9!]*')
-                .replace(/\^p/g, '\\n');
-                
-            let regex = new RegExp(specialCharPattern, 'g');
+       function performAction(action) {
+           let text = document.getElementById('text').value;
+           let search = document.getElementById('search').value;
+           let replace = document.getElementById('replace').value;
 
-            if (action === 'search') {
-                alert(text.match(regex));
-            } else if (action === 'replace') {
-                text = text.replace(regex, replace);
-            } else if (action === 'add') {
-                text += replace;
-            } else if (action === 'delete') {
-                text = text.replace(regex, '');
-            }
+           // 特殊文字処理
+           let specialCharPattern = search
+               .replace(/!/g, '[\\p{P}\\p{S}0-9]')
+               .replace(/\^*\*/g, '[\\p{P}\\p{S}0-9]*')
+               .replace(/\^p/g, '\\n');
+               
+           let regex = new RegExp(specialCharPattern, 'gu');
 
-            document.getElementById('text').value = text;
-        }
-    </script>
+           if (action === 'search') {
+               let highlightedText = text.replace(regex, match => `<span class="highlight">${match}</span>`);
+               document.getElementById('result').innerHTML = highlightedText;
+               matches = [...document.querySelectorAll('.highlight')];
+               currentMatchIndex = 0;
+               updateMatchCount();
+               scrollToCurrentMatch();
+               adjustResultHeight();
+           } else if (action === 'replace') {
+               text = text.replace(regex, replace);
+               document.getElementById('result').innerText = text;
+               matches = [];
+               updateMatchCount();
+               adjustResultHeight();
+           }
+       }
+
+       function updateMatchCount() {
+           let matchCountText = matches.length > 0 ? `${currentMatchIndex + 1}/${matches.length} 件ヒット` : '0 件ヒット';
+           document.getElementById('matchCount').innerText = matchCountText;
+       }
+
+       function scrollToCurrentMatch() {
+           if (matches.length > 0) {
+               matches.forEach((el, index) => {
+                   if (index === currentMatchIndex) {
+                       el.classList.add('current-highlight');
+                       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                   } else {
+                       el.classList.remove('current-highlight');
+                   }
+               });
+               updateMatchCount();
+           }
+       }
+
+       function nextMatch() {
+           if (matches.length > 0) {
+               currentMatchIndex = (currentMatchIndex + 1) % matches.length;
+               scrollToCurrentMatch();
+           }
+       }
+
+       function prevMatch() {
+           if (matches.length > 0) {
+               currentMatchIndex = (currentMatchIndex - 1 + matches.length) % matches.length;
+               scrollToCurrentMatch();
+           }
+       }
+
+       function adjustResultHeight() {
+           const resultDiv = document.getElementById('result');
+           resultDiv.style.height = 'auto';
+           resultDiv.style.height = resultDiv.scrollHeight + 'px';
+       }
+   </script>
 </head>
 <body>
-    <div class="container">
-        <h1>文字操作サイト</h1>
-        <textarea id="text" placeholder="ここにテキストを入力してください"></textarea>
-        <div class="actions">
-            <input type="text" id="search" placeholder="検索する文字列">
-            <input type="text" id="replace" placeholder="置換/追加する文字列">
-            <button onclick="performAction('search')">検索</button>
-            <button onclick="performAction('replace')">置換</button>
-            <button onclick="performAction('add')">追加</button>
-            <button onclick="performAction('delete')">削除</button>
-        </div>
-        <h2>特殊文字一覧</h2>
-        <ul>
-            <li><strong>!:</strong> 特殊記号、数字を含む全ての文字1文字</li>
-            <li><strong>^*:</strong> 0文字以上の何かしらの特殊記号、数字を含む全ての文字</li>
-            <li><strong>^p:</strong> 改行文字</li>
-            <!-- 他の特殊文字の説明をここに追加 -->
-        </ul>
-    </div>
-<a href="index.html">目次（トップ）へ</a><br />
+   <div class="container">
+       <h2>文字検索・置換ページ </h2>
+       <nav>
+            <a href="index.html">目次（トップ）</a>＞ <a href="texttt00.html">文字検索・置換ページ </a>
+       </nav>
+       <textarea id="text" placeholder="ここにテキストを入力してください"></textarea>
+       <div class="actions">
+           <input type="text" id="search" placeholder="検索する文字列">
+           <input type="text" id="replace" placeholder="置換する文字列">
+           <button onclick="performAction('search')">検索</button>
+           <button onclick="performAction('replace')">置換</button>
+       </div>
+       <h3>結果</h3>
+       <div id="result"></div>
+       <div class="actions">
+           <button onclick="prevMatch()">前へ</button>
+           <button onclick="nextMatch()">次へ</button>
+           <span id="matchCount"></span>
+       </div>
+       <h3>特殊文字一覧</h3>
+       <ul>
+           <li><strong>!:</strong> 特殊記号、数字を含む全ての文字1文字</li>
+           <li><strong>^*:</strong> 0文字以上の何かしらの特殊記号、数字を含む全ての文字</li>
+           <li><strong>^p:</strong> 改行文字</li>
+       </ul>
+   </div><a href="index.html">目次（トップ）へ</a><br />
 </body>
 </html>
