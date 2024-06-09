@@ -1,8 +1,8 @@
-　<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
    <meta charset="UTF-8">
-   <title>文字検索・置換ページ </title>
+   <title>文字検索・置換ページ</title>
    <style>
        body {
            font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
            margin: 20px;
        }
        textarea, #result {
-           width: 100%;
+           width: 80%;
            margin-bottom: 10px;
            font-family: Arial, sans-serif;
            font-size: 14px;
@@ -23,9 +23,11 @@
            white-space: pre-wrap;
            overflow-y: hidden;
            display: block;
+           margin: 0 auto;
        }
        .actions {
            margin-top: 10px;
+           text-align: center;
        }
        .highlight {
            background-color: yellow;
@@ -38,17 +40,30 @@
        let currentMatchIndex = 0;
        let matches = [];
 
+       function escapeSpecialChars(text) {
+           return text.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+       }
+
+       function processSpecialChars(text) {
+           return text
+               .replace(/!/, '[\\p{P}\\p{S}\\dＡ-Ｚａ-ｚ０-９]')
+               .replace(/\^\*\//g, '[\\p{P}\\p{S}\\dＡ-Ｚａ-ｚ０-９]*')
+               .replace(/\^p/g, '\\n')
+               .replace(/\.\\\+\./g, '[ 　]+');
+       }
+
        function performAction(action) {
            let text = document.getElementById('text').value;
            let search = document.getElementById('search').value;
            let replace = document.getElementById('replace').value;
+           let isNormalSearch = false;
 
-           // 特殊文字処理
-           let specialCharPattern = search
-               .replace(/!/g, '[\\p{P}\\p{S}0-9]')
-               .replace(/\^*\*/g, '[\\p{P}\\p{S}0-9]*')
-               .replace(/\^p/g, '\\n');
-               
+           if (search.startsWith('/n/o/r/m/a/l/') && search.endsWith('/n/o/r/m/a/l/')) {
+               search = search.slice(10, -10);
+               isNormalSearch = true;
+           }
+
+           let specialCharPattern = isNormalSearch ? escapeSpecialChars(search) : processSpecialChars(search);
            let regex = new RegExp(specialCharPattern, 'gu');
 
            if (action === 'search') {
@@ -110,9 +125,9 @@
 </head>
 <body>
    <div class="container">
-       <h2>文字検索・置換ページ </h2>
+       <h2>文字検索・置換ページ</h2>
        <nav>
-            <a href="index.html">目次（トップ）</a>＞ <a href="texttt00.html">文字検索・置換ページ </a>
+            <a href="index.html">目次（トップ）</a>＞ <a href="texttt00.html">文字検索・置換ページ</a>
        </nav>
        <textarea id="text" placeholder="ここにテキストを入力してください"></textarea>
        <div class="actions">
@@ -122,17 +137,19 @@
            <button onclick="performAction('replace')">置換</button>
        </div>
        <h3>結果</h3>
-       <div id="result"></div>
        <div class="actions">
            <button onclick="prevMatch()">前へ</button>
            <button onclick="nextMatch()">次へ</button>
            <span id="matchCount"></span>
        </div>
+       <div id="result"></div>
        <h3>特殊文字一覧</h3>
        <ul>
-           <li><strong>!:</strong> 特殊記号、数字を含む全ての文字1文字</li>
-           <li><strong>^*:</strong> 0文字以上の何かしらの特殊記号、数字を含む全ての文字</li>
+           <li><strong>!:</strong><b>|調整中|</b>半角・全角を問わない数字や記号などを含む何かしらの文字の存在（1個のみ）（改行は含まない）</li>
+           <li><strong>^*:</strong> <b>|調整中|</b>半角・全角を問わない数字や記号などを含む何かしらの文字の存在（0個以上）（改行は含まない）</li>
            <li><strong>^p:</strong> 改行文字</li>
+           <li><strong>.+.:</strong> 行ごと</li>
+           <li><strong>注意:</strong> <b>|調整中|</b>特殊文字と同じ文字列を非特殊文字として検索する場合は、<code>/n/o/r/m/a/l/</code> を前後に追加してください</li>
        </ul>
    </div><a href="index.html">目次（トップ）へ</a><br />
 </body>
