@@ -2,156 +2,70 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文字操作ツール</title>
+    <title>文字操作サイト</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
         }
-
-        h1 {
-            font-size: 24px;
+        .container {
+            margin: 20px;
         }
-
         textarea {
             width: 100%;
-            margin-bottom: 10px;
+            height: 100px;
         }
-
-        input, button {
-            margin: 5px;
-        }
-
-        button {
-            margin: 5px;
-        }
-
-        #output {
-            margin-top: 20px;
-            white-space: pre-wrap;
-            border: 1px solid #ddd;
-            padding: 10px;
-            width: 100%;
-        }
-
-        #specialCharacters {
-            margin-top: 20px;
-        }
-
-        #specialCharacters table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        #specialCharacters th, #specialCharacters td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        #specialCharacters th {
-            background-color: #f2f2f2;
+        .actions {
+            margin-top: 10px;
         }
     </style>
-</head>
-<body>
-    <h1>文字操作ツール</h1>
-    <textarea id="inputText" rows="10" cols="50" placeholder="ここにテキストを入力してください"></textarea>
-    <br>
-    <input type="text" id="searchText" placeholder="検索する文字列">
-    <input type="text" id="replaceText" placeholder="置換後の文字列">
-    <button onclick="performAction('search')">検索</button>
-    <button onclick="performAction('replace')">置換</button>
-    <button onclick="performAction('add')">追加</button>
-    <div id="output"></div>
-
-    <div id="specialCharacters">
-        <h2>特殊文字の説明</h2>
-        <table>
-            <tr>
-                <th>特殊文字</th>
-                <th>説明</th>
-            </tr>
-            <tr>
-                <td>\n</td>
-                <td>改行文字にマッチします。</td>
-            </tr>
-            <tr>
-                <td>.</td>
-                <td>任意の1文字にマッチします。</td>
-            </tr>
-            <tr>
-                <td>.*</td>
-                <td>任意の文字列（0文字以上）にマッチします。</td>
-            </tr>
-            <tr>
-                <td>\d</td>
-                <td>任意の数字にマッチします。</td>
-            </tr>
-            <tr>
-                <td>\w</td>
-                <td>任意の単語構成文字（英数字とアンダースコア）にマッチします。</td>
-            </tr>
-            <tr>
-                <td>\s</td>
-                <td>任意の空白文字（スペース、タブ、改行）にマッチします。</td>
-            </tr>
-            <tr>
-                <td>\S</td>
-                <td>任意の空白文字以外の文字にマッチします。</td>
-            </tr>
-            <tr>
-                <td>[\s\S]</td>
-                <td>任意の文字（空白文字および空白文字以外の文字）にマッチします。これにより、任意の長さの任意の文字列にマッチできます。</td>
-            </tr>
-            <tr>
-                <td>[\u0000-\uFFFF]*</td>
-                <td>任意のUnicode文字0字以上にマッチします。これにより、任意の文字と任意の文字の間に挟まれているすべてのUnicode文字を検索・置換できます。</td>
-            </tr>
-            <tr>
-                <td>@.*?@</td>
-                <td>任意の文字（特殊文字含む）に挟まれた0字以上の任意の文字列にマッチします。</td>
-            </tr>
-            <tr>
-                <td>!.*?!</td>
-                <td>任意の特殊記号・数字を含む文字0字以上にマッチします。</td>
-            </tr>
-        </table>
-    </div>
-
     <script>
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-
         function performAction(action) {
-            let inputText = document.getElementById('inputText').value;
-            const searchText = document.getElementById('searchText').value;
-            const replaceText = document.getElementById('replaceText').value;
-            let outputText = inputText;
+            let text = document.getElementById('text').value;
+            let search = document.getElementById('search').value;
+            let replace = document.getElementById('replace').value;
 
-            try {
-                if (action === 'search') {
-                    if (searchText) {
-                        const regex = new RegExp(escapeRegExp(searchText), 'g');
-                        outputText = inputText.replace(regex, '<mark>$&</mark>');
-                    }
-                } else if (action === 'replace') {
-                    if (searchText) {
-                        const regex = new RegExp(escapeRegExp(searchText), 'g');
-                        outputText = inputText.replace(regex, replaceText);
-                    }
-                } else if (action === 'add') {
-                    outputText = inputText + replaceText;
-                }
-            } catch (e) {
-                outputText = '正規表現の形式が正しくありません: ' + e.message;
+            // 特殊文字処理
+            let specialCharPattern = search
+                .replace(/!/g, '[!0-9!]')
+                .replace(/\^*\*/g, '[!0-9!]*')
+                .replace(/\^p/g, '\\n');
+                
+            let regex = new RegExp(specialCharPattern, 'g');
+
+            if (action === 'search') {
+                alert(text.match(regex));
+            } else if (action === 'replace') {
+                text = text.replace(regex, replace);
+            } else if (action === 'add') {
+                text += replace;
+            } else if (action === 'delete') {
+                text = text.replace(regex, '');
             }
 
-            document.getElementById('output').innerHTML = outputText;
+            document.getElementById('text').value = text;
         }
     </script>
-    <a href="index.html">目次（トップ）へ</a><br />
+</head>
+<body>
+    <div class="container">
+        <h1>文字操作サイト</h1>
+        <textarea id="text" placeholder="ここにテキストを入力してください"></textarea>
+        <div class="actions">
+            <input type="text" id="search" placeholder="検索する文字列">
+            <input type="text" id="replace" placeholder="置換/追加する文字列">
+            <button onclick="performAction('search')">検索</button>
+            <button onclick="performAction('replace')">置換</button>
+            <button onclick="performAction('add')">追加</button>
+            <button onclick="performAction('delete')">削除</button>
+        </div>
+        <h2>特殊文字一覧</h2>
+        <ul>
+            <li><strong>!:</strong> 特殊記号、数字を含む全ての文字1文字</li>
+            <li><strong>^*:</strong> 0文字以上の何かしらの特殊記号、数字を含む全ての文字</li>
+            <li><strong>^p:</strong> 改行文字</li>
+            <!-- 他の特殊文字の説明をここに追加 -->
+        </ul>
+    </div>
+<a href="index.html">目次（トップ）へ</a><br />
 </body>
 </html>
